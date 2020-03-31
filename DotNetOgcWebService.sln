@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terradue.WebService.Ogc", "Terradue.WebService.Ogc\Terradue.WebService.Ogc.csproj", "{8195D631-B68D-471E-A4C4-7832EAD5C8FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8195D631-B68D-471E-A4C4-7832EAD5C8FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8195D631-B68D-471E-A4C4-7832EAD5C8FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8195D631-B68D-471E-A4C4-7832EAD5C8FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8195D631-B68D-471E-A4C4-7832EAD5C8FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
