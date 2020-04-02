@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using Terradue.WebService.Ogc.WebService.Common;
 
 namespace Terradue.WebService.Ogc.Common
 {

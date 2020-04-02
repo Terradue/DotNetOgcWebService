@@ -107,7 +107,7 @@ namespace Terradue.WebService.Ogc.Sos
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public override OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null)
+        public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
             GetResourceByIdType grg = payload as GetResourceByIdType;
 

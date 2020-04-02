@@ -3,16 +3,16 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Web;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
+using Terradue.WebService.Ogc.Common;
 using Terradue.WebService.Ogc.Configuration;
-using Terradue.WebService.Ogc.WebService.Common;
 
 namespace Terradue.WebService.Ogc {
     /// <summary>
@@ -24,9 +24,9 @@ namespace Terradue.WebService.Ogc {
         /// <summary>
         /// Proccesses HTTP request
         /// </summary>
-        /// <param name="messageRequest">Message with request details</param>
+        /// <param name="request">Message with request details</param>
         /// <returns>Response to the request.</returns>
-        public static IActionResult ProcessRequest(HttpRequestMessage messageRequest, IMemoryCache cache)
+        public static IActionResult ProcessRequest(HttpRequest request, IHttpContextAccessor accessor, IMemoryCache cache)
         {
             OperationResult result = null;
 
@@ -35,12 +35,12 @@ namespace Terradue.WebService.Ogc {
                 XDocument doc = null;
 
 
-                if (messageRequest.Content.Headers.ContentLength > 0)
+                if (request.Headers.ContentLength > 0)
                 {
-                    doc = XDocument.Load(messageRequest.Content.ReadAsStreamAsync().Result);
+                    doc = XDocument.Load(request.Body);
                 }
 
-                NameValueCollection queryParameters = HttpUtility.ParseQueryString(messageRequest.RequestUri.Query);
+                NameValueCollection queryParameters = HttpUtility.ParseQueryString(request.QueryString.Value);
 
                 //  Apply doc or global defaults
                 if (queryParameters["service"] == null)
@@ -81,7 +81,7 @@ namespace Terradue.WebService.Ogc {
                 if (operation.CacheEnabled)
                 {
                     //  Create cache key to be used to store results in cache
-                    cacheKey = messageRequest.RequestUri.ToString();
+                    cacheKey = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(request);
 
                     if (doc != null)
                     {
@@ -95,7 +95,7 @@ namespace Terradue.WebService.Ogc {
                 if (result == null)
                 {
                     //  Get request handler object for selected operation
-                    BaseOperation requestHandler = operation.CreateHandlerInstance();
+                    BaseOperation requestHandler = operation.CreateHandlerInstance(accessor,cache);
 
                     OwsRequestBase payload = null;
 
@@ -105,15 +105,15 @@ namespace Terradue.WebService.Ogc {
                         payload = Activator.CreateInstance(requestHandler.RequestType, new object[] { queryParameters }) as OwsRequestBase;
                     }
                     else
-                    {
-                        XmlSerializer serializer = requestHandler.RequestType.GetSerializer();
+                    {                        
+                        XmlSerializer serializer = requestHandler.GetRequestTypeSerializer();
                         payload = serializer.Deserialize(doc.CreateReader()) as OwsRequestBase;
                     }
 
                     payload.Validate();
 
                     //  Hanle request and return results back
-                    result = requestHandler.ProcessRequest(messageRequest, payload);
+                    result = requestHandler.ProcessRequest(request, payload);
 
                 }
 
@@ -127,7 +127,7 @@ namespace Terradue.WebService.Ogc {
             catch (OgcException exp)
             {
                 //  Handle OGC specific errors
-                result = new OperationResult(messageRequest)
+                result = new OperationResult(request)
                 {
                     ResultObject = exp.ExceptionReport,
                 };
@@ -135,7 +135,7 @@ namespace Terradue.WebService.Ogc {
             catch (System.Exception exp)
             {
                 //  Handle all other .NET errors
-                result = new OperationResult(messageRequest)
+                result = new OperationResult(request)
                 {
                     ResultObject = new NoApplicableCodeException("Application error.", exp).ExceptionReport,
                 };

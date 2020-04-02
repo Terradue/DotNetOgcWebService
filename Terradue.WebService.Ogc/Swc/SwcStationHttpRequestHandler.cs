@@ -16,20 +16,20 @@ namespace Terradue.WebService.Ogc.Swc {
         /// <summary>
         /// Proccesses HTTP request
         /// </summary>
-        /// <param name="messageRequest">Message with request details</param>
+        /// <param name="request">Message with request details</param>
         /// <returns>Response to the request.</returns>
-        public static IActionResult ProcessRequest(HttpRequestMessage messageRequest, string stationId, IMemoryCache cache)
+        public static IActionResult ProcessRequest(HttpRequest request, string stationId, IMemoryCache cache)
         {
             OperationResult result = null;
 
             try
             {
-                NameValueCollection queryParameters = HttpUtility.ParseQueryString(messageRequest.RequestUri.Query);
+                NameValueCollection queryParameters = HttpUtility.ParseQueryString(request.QueryString.Value);
 
                 string cacheKey = string.Empty;
 
                 //  Create cache key to be used to store results in cache
-                cacheKey = messageRequest.RequestUri.ToString();
+                cacheKey = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(request);
 
                 //  Get cahce resuls if exists
                 result = cache.Get<OperationResult>(cacheKey);
@@ -37,14 +37,14 @@ namespace Terradue.WebService.Ogc.Swc {
                 if (result == null)
                 {
                     //  Hanle request and return results back
-                    result = GetStation(messageRequest, stationId);
+                    result = GetStation(request, stationId);
                 }
 
             }
             catch (System.Exception exp)
             {
                 //  Handle all other .NET errors
-                result = new OperationResult(messageRequest)
+                result = new OperationResult(request)
                 {
                     ResultObject = new NoApplicableCodeException("Application error.", exp).ExceptionReport,
                 };
@@ -53,7 +53,7 @@ namespace Terradue.WebService.Ogc.Swc {
             return result;
         }
 
-        static OperationResult GetStation(HttpRequestMessage messageRequest, string stationId)
+        static OperationResult GetStation(HttpRequest messageRequest, string stationId)
         {
             OperationResult getStation = new OperationResult(messageRequest);
 

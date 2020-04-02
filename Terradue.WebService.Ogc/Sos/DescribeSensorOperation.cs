@@ -2,20 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 using System.Xml.Serialization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.SensorMl20;
-using Terradue.WebService.Ogc.WebService.Common;
 using Terradue.WebService.Ogc.Configuration;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 
-namespace Terradue.WebService.Ogc.Sos
-{
+namespace Terradue.WebService.Ogc.Sos {
     /// <summary>
     /// Represents a sample DescribeSensor request handler
     /// </summary>
@@ -168,7 +164,7 @@ namespace Terradue.WebService.Ogc.Sos
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public override OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null)
+        public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
             Terradue.ServiceModel.Ogc.Swes20.DescribeSensorType dsr = payload as Terradue.ServiceModel.Ogc.Swes20.DescribeSensorType;
 

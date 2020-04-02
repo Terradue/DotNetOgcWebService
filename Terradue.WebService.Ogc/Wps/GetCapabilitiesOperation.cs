@@ -1,26 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Web;
-using System.Xml;
 using System.Xml.Serialization;
-using Terradue.ServiceModel.Ogc;
-using Terradue.ServiceModel.Ogc.Exceptions;
-using Terradue.ServiceModel.Ogc.Gml321;
-using Terradue.ServiceModel.Ogc.Ows11;
-using Terradue.WebService.Ogc.WebService.Common;
-using Terradue.WebService.Ogc.Configuration;
-using Terradue.ServiceModel.Ogc.Wps10;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
-using System.Configuration;
+using Terradue.ServiceModel.Ogc;
+using Terradue.ServiceModel.Ogc.Exceptions;
+using Terradue.ServiceModel.Ogc.Ows11;
+using Terradue.ServiceModel.Ogc.Wps10;
+using Terradue.WebService.Ogc.Configuration;
 
-namespace Terradue.WebService.Ogc.Wps
-{
+namespace Terradue.WebService.Ogc.Wps {
     /// <summary>
     /// Represents a sample GetCapabilities request handler
     /// </summary>
@@ -203,7 +197,7 @@ namespace Terradue.WebService.Ogc.Wps
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public override OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null)
+        public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
             GetCapabilities getCapabilities = payload as GetCapabilities;
 
@@ -272,7 +266,7 @@ namespace Terradue.WebService.Ogc.Wps
 
             if (getCapabilities.Sections == null || getCapabilities.Sections.Contains("OperationsMetadata"))
             {
-                capabilities.OperationsMetadata = this.GetOperationsMetadata();
+                capabilities.OperationsMetadata = this.GetOperationsMetadata(this.Accessor,this.Cache);
             }
 
             if (getCapabilities.Sections == null || getCapabilities.Sections.Contains("ProcessOfferings"))
@@ -307,7 +301,7 @@ namespace Terradue.WebService.Ogc.Wps
             {
                 //  Get ServiceProvider from XML file
                 XmlSerializer serializer = new XmlSerializer(typeof(ServiceProvider));
-                var filePath = ConfigurationManager.AppSettings["filepath_GetCapabilities_ServiceProvider"];
+                string filePath = string.Format(CultureInfo.InvariantCulture, "{0}{2}{1}{2}GetCapabilities.ServiceProvider.xml", ConfigurationManager.AppSettings["app:data_path"], this.ServiceName, Path.DirectorySeparatorChar);
                 ServiceProvider sp = (ServiceProvider)serializer.Deserialize(File.OpenText(filePath));
 
                 lock (_lock)
@@ -332,7 +326,7 @@ namespace Terradue.WebService.Ogc.Wps
             {
                 //  Get ServiceProvider from XML file
                 XmlSerializer serializer = new XmlSerializer(typeof(ServiceIdentification));
-                var filePath = ConfigurationManager.AppSettings["filepath_GetCapabilities_ServiceIdentification"];
+                string filePath = string.Format(CultureInfo.InvariantCulture, "{0}{2}{1}{2}GetCapabilities.ServiceIdentification.xml", ConfigurationManager.AppSettings["app:data_path"], this.ServiceName, Path.DirectorySeparatorChar);
                 ServiceIdentification si = (ServiceIdentification)serializer.Deserialize(File.OpenText(filePath));
 
                 lock (_lock)
@@ -351,7 +345,7 @@ namespace Terradue.WebService.Ogc.Wps
         /// Gets OperationsMetadata section
         /// </summary>
         /// <returns></returns>
-        protected virtual OperationsMetadata GetOperationsMetadata()
+        protected virtual OperationsMetadata GetOperationsMetadata(IHttpContextAccessor accessor, IMemoryCache cache)
         {
             OperationsMetadata om = new OperationsMetadata();
 
@@ -364,7 +358,7 @@ namespace Terradue.WebService.Ogc.Wps
                     continue;
                 }
 
-                BaseOperation operationHandler = operationInfo.CreateHandlerInstance();
+                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(accessor,cache);
 
                 Operation operation = new Operation();
 

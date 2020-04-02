@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
-using Terradue.ServiceModel.Ogc;
-using Terradue.ServiceModel.Ogc.Ows11;
-using Terradue.WebService.Ogc.WebService.Common;
-using Terradue.WebService.Ogc.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Terradue.ServiceModel.Ogc;
+using Terradue.ServiceModel.Ogc.Ows11;
+using Terradue.WebService.Ogc.Configuration;
 
-namespace Terradue.WebService.Ogc.Sos
-{
+namespace Terradue.WebService.Ogc.Sos {
     /// <summary>
     /// 
     /// </summary>
@@ -114,7 +110,7 @@ namespace Terradue.WebService.Ogc.Sos
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public override abstract OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null);
+        public override abstract OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null);
 
         #endregion
 

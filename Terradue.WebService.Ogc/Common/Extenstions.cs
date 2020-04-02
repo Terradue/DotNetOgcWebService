@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Terradue.WebService.Ogc.WebService.Common
+namespace Terradue.WebService.Ogc.Common
 {
     /// <summary>
     /// This class contains different extention methods

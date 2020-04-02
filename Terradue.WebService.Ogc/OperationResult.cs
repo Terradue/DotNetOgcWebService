@@ -4,7 +4,9 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using CsvHelper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
@@ -19,12 +21,14 @@ namespace Terradue.WebService.Ogc {
     /// </remarks>
     public class OperationResult : IActionResult
     {
-        readonly HttpRequestMessage _request;
+        readonly HttpRequest _request;
+
+        public OperationResult() { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OperationResult"/> class.
         /// </summary>
-        public OperationResult(HttpRequestMessage request)
+        public OperationResult(HttpRequest request)
         {
             this._request = request;
             this.OutputFormat = OutputFormat.ApplicationXml;
@@ -45,19 +49,16 @@ namespace Terradue.WebService.Ogc {
         /// </summary>
         /// <returns></returns>        
         public Task ExecuteResultAsync(ActionContext context) {
-            HttpResponseMessage result = null;
-
+            HttpResponseMessage result = new HttpResponseMessage();
+            
             switch (this.OutputFormat) {
                 case OutputFormat.ApplicationXmlExternalParsedEntity:
                 case OutputFormat.TextXmlExternalParsedEntity:
                 case OutputFormat.ApplicationXml:
                 case OutputFormat.TextXml:
                 case OutputFormat.ApplicationXmlWaterMl2: {
-
-                        result = new HttpResponseMessage() {
-                            Content = new XmlContent(this.ResultObject, this.OutputFormat.ToStringValue()),
-                            RequestMessage = _request,
-                        };
+                        result.Content = new XmlContent(this.ResultObject, this.OutputFormat.ToStringValue());
+                        result.RequestMessage = new HttpRequestMessage(new HttpMethod(_request.Method), Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(_request));
                         break;
                     }
 
@@ -70,16 +71,13 @@ namespace Terradue.WebService.Ogc {
                                 csvWriter.WriteRecords(records);
                                 streamWriter.Flush();
                                 memoryStream.Position = 0;
-                                result = new HttpResponseMessage() {
-                                    Content = new StreamContent(memoryStream),
-                                    RequestMessage = _request
-                                };
-                                result.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+                                result.Content = new StreamContent(memoryStream);
+                                result.RequestMessage = new HttpRequestMessage(new HttpMethod(_request.Method), Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(_request));                                
+                                //result.ContentType = new MediaTypeHeaderValue("text/csv").MediaType;
                             }
                         } else {
                             throw new NoApplicableCodeException("Message is empty or not set or result object is not supported.");
                         }
-
                         break;
                     }
 
@@ -90,11 +88,7 @@ namespace Terradue.WebService.Ogc {
                             throw new NoApplicableCodeException("Message is empty or not set or result object is not supported.");
                         }
 
-                        result = new HttpResponseMessage() {
-                            Content = new StringContent(message),
-                            RequestMessage = _request
-                        };
-                        result.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+                        result.Content = new StringContent(message);                            
                         break;
                     }
                 default:

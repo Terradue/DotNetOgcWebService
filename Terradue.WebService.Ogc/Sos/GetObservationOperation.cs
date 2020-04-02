@@ -3,21 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Http;
 using System.Net.Mime;
-using System.Threading;
-using Terradue.ServiceModel.Ogc;
-using Terradue.ServiceModel.Ogc.Exceptions;
-using Terradue.ServiceModel.Ogc.Ows11;
-using Terradue.WebService.Ogc.WebService.Common;
-using Terradue.WebService.Ogc.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Terradue.ServiceModel.Ogc;
+using Terradue.ServiceModel.Ogc.Ows11;
+using Terradue.WebService.Ogc.Common;
+using Terradue.WebService.Ogc.Configuration;
 
-namespace Terradue.WebService.Ogc.Sos
-{
+namespace Terradue.WebService.Ogc.Sos {
     /// <summary>
     /// Represents a sample GetObservation request handler
     /// </summary>
@@ -214,7 +208,7 @@ namespace Terradue.WebService.Ogc.Sos
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public override OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null)
+        public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
             throw new NotImplementedException();
         }

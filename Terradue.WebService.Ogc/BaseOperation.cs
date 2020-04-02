@@ -1,12 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Net.Http;
+using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Ows11;
+using Terradue.WebService.Ogc.Common;
 using Terradue.WebService.Ogc.Configuration;
 
 namespace Terradue.WebService.Ogc {
@@ -15,7 +14,7 @@ namespace Terradue.WebService.Ogc {
     /// </summary>
     public abstract class BaseOperation {
 
-        protected readonly HttpContext HttpContext;
+        protected readonly IHttpContextAccessor Accessor;
         protected readonly IMemoryCache Cache;
 
         /// <summary>
@@ -50,11 +49,11 @@ namespace Terradue.WebService.Ogc {
             this.RequestName = this.Configuration.Operation;
             this.Version = this.Configuration.Version;
 
-            this.HttpContext = accessor.HttpContext;
+            this.Accessor = accessor;
             this.Cache = cache;
 
             //  Set service base uri
-            this.ServiceBaseUri = new Uri(this.HttpContext.Request.Host.ToUriComponent());
+            this.ServiceBaseUri = new Uri(this.Accessor.HttpContext.Request.Host.ToUriComponent());
         }
 
         /// <summary>
@@ -78,6 +77,14 @@ namespace Terradue.WebService.Ogc {
             {
                 return ServiceConfiguration.Settings.Services;
             }
+        }
+
+        /// <summary>
+        /// Get Request type Xml Serializer
+        /// </summary>
+        /// <returns></returns>
+        public XmlSerializer GetRequestTypeSerializer() {
+            return this.RequestType.GetSerializer();
         }
 
         /// <summary>
@@ -110,6 +117,6 @@ namespace Terradue.WebService.Ogc {
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public abstract OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null);
+        public abstract OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null);
     }
 }

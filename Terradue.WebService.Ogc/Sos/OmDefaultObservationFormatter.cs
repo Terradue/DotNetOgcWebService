@@ -1,13 +1,8 @@
 using System;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using Terradue.ServiceModel.Ogc.Gml321;
 using Terradue.ServiceModel.Ogc.Om20;
-using Terradue.WebService.Ogc.WebService.Common;
 
-namespace Terradue.WebService.Ogc.Sos
-{
+namespace Terradue.WebService.Ogc.Sos {
     /// <summary>
     /// Default implementation to format an observation.
     /// </summary>

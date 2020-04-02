@@ -1,6 +1,8 @@
 using System;
 using System.Configuration;
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Terradue.WebService.Ogc.Configuration
 {
@@ -170,7 +172,7 @@ namespace Terradue.WebService.Ogc.Configuration
         /// Creates an instance of an operation handler
         /// </summary>
         /// <returns>An operation handler instance</returns>
-        public BaseOperation CreateHandlerInstance()
+        public BaseOperation CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache)
         {
             if (this.operation == null)
             {
@@ -183,7 +185,7 @@ namespace Terradue.WebService.Ogc.Configuration
                     throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture, "Type '{0}' is not found.", this.DefaultHandlerType));
                 }
 
-                this.operation = Activator.CreateInstance(this._handlerType, new object[] { this }) as BaseOperation;
+                this.operation = Activator.CreateInstance(this._handlerType, new object[] { this, accessor, cache }) as BaseOperation;
             }
 
             return this.operation;

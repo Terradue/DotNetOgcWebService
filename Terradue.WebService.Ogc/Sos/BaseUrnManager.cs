@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
-using Terradue.WebService.Ogc.WebService.Common;
+using Terradue.WebService.Ogc.Common;
 
 namespace Terradue.WebService.Ogc.Sos {
     /// <summary>

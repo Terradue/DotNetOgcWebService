@@ -151,9 +151,9 @@ namespace Terradue.WebService.Ogc.Wps {
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Resposne object to be sent back to the client</returns>
-        public override OperationResult ProcessRequest(HttpRequestMessage request, OwsRequestBase payload = null)
+        public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
-            var nvc = System.Web.HttpUtility.ParseQueryString(request.RequestUri.Query);
+            var nvc = System.Web.HttpUtility.ParseQueryString(request.QueryString.Value);
             string identifier = nvc["Identifier"] ?? nvc["identifier"];
 
             //  Make sure there is valid request parameter
