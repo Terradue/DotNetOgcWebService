@@ -1,14 +1,10 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using Terradue.Core.Process;
-using Terradue.ServiceModel.Ogc.Wps10;
-using System.Threading;
 using System.Threading.Tasks;
+using Terradue.ServiceModel.Ogc.Wps10;
+using Terradue.WebService.Ogc.Core;
 
-namespace Terradue.WebService.Ogc.Wps
-{
-	public class WpsProcess : IProcess
+namespace Terradue.WebService.Ogc.Wps {
+    public class WpsProcess : IProcess
 	{
 		AsyncWPSProcess iprocess;
 

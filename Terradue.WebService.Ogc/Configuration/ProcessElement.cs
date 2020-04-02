@@ -1,7 +1,7 @@
 using System;
 using System.Configuration;
 using System.Globalization;
-using Terradue.Core.Process;
+using Terradue.WebService.Ogc.Core;
 using Terradue.WebService.Ogc.Wps;
 
 namespace Terradue.WebService.Ogc.Configuration

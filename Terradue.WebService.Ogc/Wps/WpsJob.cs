@@ -1,16 +1,14 @@
 using System;
-using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
-using Terradue.Core.Process;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.Wps10;
 using Terradue.WebService.Ogc.Configuration;
+using Terradue.WebService.Ogc.Core;
 
-namespace Terradue.WebService.Ogc.Wps
-{
+namespace Terradue.WebService.Ogc.Wps {
     public class WpsJob : IJob<ExecuteResponse>
     {
         JobOrder jobOrder;
