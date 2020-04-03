@@ -42,9 +42,9 @@ pipeline {
       }       
     }
   }
-  post { 
-    always { 
-       nunit(testResultsPattern: 'TestResult.xml')
-    }
-  }
+  // post { 
+  //   always { 
+  //      nunit(testResultsPattern: 'TestResult.xml')
+  //   }
+  // }
 }
