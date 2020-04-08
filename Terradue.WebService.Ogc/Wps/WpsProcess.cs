@@ -1,18 +1,20 @@
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Terradue.ServiceModel.Ogc.Wps10;
 using Terradue.WebService.Ogc.Core;
 
 namespace Terradue.WebService.Ogc.Wps {
-    public class WpsProcess : IProcess
-	{
+	public class WpsProcess : IProcess {
 		AsyncWPSProcess iprocess;
 
-		public WpsProcess(AsyncWPSProcess iprocess)
-		{
+		public WpsProcess(AsyncWPSProcess iprocess) {
 			this.iprocess = iprocess;
-
 		}
+
+		public void SetHttpClient(HttpClient client) {
+			this.iprocess.HttpClient = client;
+        }
 
 		public TimeSpan JobCacheTime { get; internal set; }
 

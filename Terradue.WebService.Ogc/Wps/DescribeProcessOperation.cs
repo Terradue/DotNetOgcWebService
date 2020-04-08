@@ -44,8 +44,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="DescribeSensorOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public DescribeProcessOperation(ServiceOperationElement configuration,IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, accessor, cache)
+        public DescribeProcessOperation(ServiceOperationElement configuration,IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, accessor, cache, httpClient)
         {
         }
 

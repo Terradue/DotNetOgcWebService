@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Terradue.ServiceModel.Ogc.Ows11;
@@ -27,6 +28,8 @@ namespace Terradue.WebService.Ogc.Core
                 creationTime = DateTime.Now
             };
         }
+
+        public HttpClient HttpClient;
 
         public CodeType Identifier { get; private set; }
         public LanguageStringType Title { get; private set; }

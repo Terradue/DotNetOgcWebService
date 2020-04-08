@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Globalization;
+using System.Net.Http;
 using Terradue.WebService.Ogc.Core;
 using Terradue.WebService.Ogc.Wps;
 
@@ -51,7 +52,7 @@ namespace Terradue.WebService.Ogc.Configuration
         /// </summary>
         /// <example>SOS, SAS etc'</example>
         [ConfigurationProperty("identifier", IsRequired = true)]
-        [RegexStringValidator(@"^([a-zA-Z]+)?$")]
+        [RegexStringValidator(@"^([a-zA-Z0-9]+)?$")]
         public string Identifier
         {
             get

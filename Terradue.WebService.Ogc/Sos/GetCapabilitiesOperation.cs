@@ -73,8 +73,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="GetCapabilitiesOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetCapabilitiesOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, entitiesFactory, accessor, cache)
+        public GetCapabilitiesOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, entitiesFactory, accessor, cache, httpClient)
         {
         }
 
@@ -300,7 +300,7 @@ namespace Terradue.WebService.Ogc.Sos {
             {
                 //  Get ServiceProvider from XML file
                 XmlSerializer serializer = new XmlSerializer(typeof(ServiceProvider));
-                var filePath = ConfigurationManager.AppSettings["filepath_GetCapabilities_ServiceProvider"];
+                string filePath = string.Format(CultureInfo.InvariantCulture, "{0}{2}{1}{2}GetCapabilities.ServiceProvider.xml", ConfigurationManager.AppSettings["app:data_path"], this.ServiceName, Path.DirectorySeparatorChar);
                 ServiceProvider sp = (ServiceProvider)serializer.Deserialize(File.OpenText(filePath));
 
                 lock (_lock)
@@ -324,17 +324,8 @@ namespace Terradue.WebService.Ogc.Sos {
             if (_serviceIdentification == null)
             {
                 //  Get ServiceProvider from XML file
-                XmlSerializer serializer = new XmlSerializer(typeof(ServiceIdentification));
-                //var uriBuilder = new UriBuilder {
-                //    Host = this.HttpContext.Request.Host.Host,
-                //    Scheme = this.HttpContext.Request.Scheme,
-                //    Path = imageVirtualPath
-                //};
-                
-                //if (request.Host.Port.HasValue)
-                //    uriBuilder.Port = request.Host.Port.Value;
-                //var url = uriBuilder.ToString();
-                var filePath = ConfigurationManager.AppSettings["filepath_GetCapabilities_ServiceIdentification"];
+                XmlSerializer serializer = new XmlSerializer(typeof(ServiceIdentification));                
+                string filePath = string.Format(CultureInfo.InvariantCulture, "{0}{2}{1}{2}GetCapabilities.ServiceIdentification.xml", ConfigurationManager.AppSettings["app:data_path"], this.ServiceName, Path.DirectorySeparatorChar);
                 ServiceIdentification si = (ServiceIdentification)serializer.Deserialize(File.OpenText(filePath));
 
                 lock (_lock)
@@ -366,7 +357,7 @@ namespace Terradue.WebService.Ogc.Sos {
                     continue;
                 }
 
-                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(this.Accessor, this.Cache);
+                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient);
 
                 Operation operation = new Operation();
 

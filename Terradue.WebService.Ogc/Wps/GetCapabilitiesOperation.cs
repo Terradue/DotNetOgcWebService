@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -71,8 +72,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="GetCapabilitiesOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetCapabilitiesOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, accessor, cache)
+        public GetCapabilitiesOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, accessor, cache, httpClient)
         {
         }
 
@@ -266,7 +267,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
             if (getCapabilities.Sections == null || getCapabilities.Sections.Contains("OperationsMetadata"))
             {
-                capabilities.OperationsMetadata = this.GetOperationsMetadata(this.Accessor,this.Cache);
+                capabilities.OperationsMetadata = this.GetOperationsMetadata(this.Accessor,this.Cache,this.HttpClient);
             }
 
             if (getCapabilities.Sections == null || getCapabilities.Sections.Contains("ProcessOfferings"))
@@ -345,7 +346,7 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Gets OperationsMetadata section
         /// </summary>
         /// <returns></returns>
-        protected virtual OperationsMetadata GetOperationsMetadata(IHttpContextAccessor accessor, IMemoryCache cache)
+        protected virtual OperationsMetadata GetOperationsMetadata(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
         {
             OperationsMetadata om = new OperationsMetadata();
 
@@ -358,7 +359,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     continue;
                 }
 
-                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(accessor,cache);
+                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(accessor,cache,httpClient);
 
                 Operation operation = new Operation();
 

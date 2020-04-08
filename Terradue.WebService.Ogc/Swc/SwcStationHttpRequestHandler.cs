@@ -5,22 +5,29 @@ using Terradue.ServiceModel.Ogc.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace Terradue.WebService.Ogc.Swc {
     /// <summary>
     /// This class handles HTTP operations that can be used for OGC Service. 
     /// </summary>
-    public class SwcStationHttpRequestHandler
+    public class SwcStationHttpRequestHandler : HttpRequestHandler
     {
+        public SwcStationHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient) : base(accessor, cache, httpClient) { }
 
         /// <summary>
         /// Proccesses HTTP request
         /// </summary>
         /// <param name="request">Message with request details</param>
         /// <returns>Response to the request.</returns>
-        public static IActionResult ProcessRequest(HttpRequest request, string stationId, IMemoryCache cache)
+        public IActionResult ProcessRequest(string stationId)
         {
             OperationResult result = null;
+
+            if (this.HttpAccessor == null || this.HttpAccessor.HttpContext == null || this.HttpAccessor.HttpContext.Request == null)
+                throw new Exception("Invalid Http context");
+
+            var request = this.HttpAccessor.HttpContext.Request;
 
             try
             {
@@ -32,7 +39,7 @@ namespace Terradue.WebService.Ogc.Swc {
                 cacheKey = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(request);
 
                 //  Get cahce resuls if exists
-                result = cache.Get<OperationResult>(cacheKey);
+                result = this.Cache.Get<OperationResult>(cacheKey);
 
                 if (result == null)
                 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -43,8 +44,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="DescribeSensorOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public DescribeSensorOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, entitiesFactory, accessor, cache)
+        public DescribeSensorOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, entitiesFactory, accessor, cache, httpClient)
         {
         }
 

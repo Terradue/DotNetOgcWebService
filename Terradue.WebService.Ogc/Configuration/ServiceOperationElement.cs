@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Globalization;
+using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -166,28 +167,24 @@ namespace Terradue.WebService.Ogc.Configuration
             }
         }
 
-
+        private void PrepareOperation() {
+            if (this._handlerType == null) {
+                this._handlerType = Type.GetType(this.DefaultHandlerType);
+            }
+            if (this._handlerType == null) {
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture, "Type '{0}' is not found.", this.DefaultHandlerType));
+            }
+        }
 
         /// <summary>
         /// Creates an instance of an operation handler
         /// </summary>
-        /// <returns>An operation handler instance</returns>
-        public BaseOperation CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache)
-        {
-            if (this.operation == null)
-            {
-                if (this._handlerType == null)
-                {
-                    this._handlerType = Type.GetType(this.DefaultHandlerType);
-                }
-                if (this._handlerType == null)
-                {
-                    throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture, "Type '{0}' is not found.", this.DefaultHandlerType));
-                }
-
-                this.operation = Activator.CreateInstance(this._handlerType, new object[] { this, accessor, cache }) as BaseOperation;
+        /// <returns>An operation handler instance</returns>        
+        public BaseOperation CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient) {
+            if (this.operation == null) {
+                this.PrepareOperation();
+                this.operation = Activator.CreateInstance(this._handlerType, new object[] { this, accessor, cache, httpClient }) as BaseOperation;
             }
-
             return this.operation;
         }
     }

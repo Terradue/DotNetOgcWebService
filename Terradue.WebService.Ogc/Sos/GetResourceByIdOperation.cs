@@ -21,8 +21,8 @@ namespace Terradue.WebService.Ogc.Sos
         /// Initializes a new instance of the <see cref="GetResourceByIdOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetResourceByIdOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, entitiesFactory, accessor, cache)
+        public GetResourceByIdOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, entitiesFactory, accessor, cache, httpClient)
         {
         }
 

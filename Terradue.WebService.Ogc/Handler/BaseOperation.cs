@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,6 +17,7 @@ namespace Terradue.WebService.Ogc {
 
         protected readonly IHttpContextAccessor Accessor;
         protected readonly IMemoryCache Cache;
+        protected readonly HttpClient HttpClient;
 
         /// <summary>
         /// Gets an operation configuration information
@@ -41,7 +43,7 @@ namespace Terradue.WebService.Ogc {
         /// Initializes a new instance of the <see cref="BaseOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        protected BaseOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache)
+        protected BaseOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
         {
             this.Configuration = configuration;
 
@@ -51,6 +53,7 @@ namespace Terradue.WebService.Ogc {
 
             this.Accessor = accessor;
             this.Cache = cache;
+            this.HttpClient = httpClient;
 
             //  Set service base uri
             this.ServiceBaseUri = new Uri(this.Accessor.HttpContext.Request.Host.ToUriComponent());

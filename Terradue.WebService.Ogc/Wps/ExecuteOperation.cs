@@ -43,8 +43,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="DescribeSensorOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public ExecuteOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, accessor, cache)
+        public ExecuteOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, accessor, cache, httpClient)
         {
         }
 
@@ -169,7 +169,10 @@ namespace Terradue.WebService.Ogc.Wps {
                 throw new InvalidParameterValueException("identifier", identifier);
             }
 
-			ExecuteResponse executeResponse = processes[identifier].SubmitExecuteProcess(payload as Execute);
+            var process = processes[identifier];
+            process.SetHttpClient(this.HttpClient);
+
+			ExecuteResponse executeResponse = process.SubmitExecuteProcess(payload as Execute);
 
             result.ResultObject = executeResponse;
 

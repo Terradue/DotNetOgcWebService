@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
+using System.Net.Http;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -21,8 +22,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="GetObservationOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetObservationOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache)
-            : base(configuration, entitiesFactory, accessor, cache)
+        public GetObservationOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+            : base(configuration, entitiesFactory, accessor, cache, httpClient)
         {
         }
 
