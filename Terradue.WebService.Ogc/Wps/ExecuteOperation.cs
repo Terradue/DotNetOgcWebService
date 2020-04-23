@@ -171,8 +171,9 @@ namespace Terradue.WebService.Ogc.Wps {
 
             var process = processes[identifier];
             process.SetHttpClient(this.HttpClient);
+            process.SetMemoryCache(this.Cache);
 
-			ExecuteResponse executeResponse = process.SubmitExecuteProcess(payload as Execute);
+            ExecuteResponse executeResponse = process.SubmitExecuteProcess(payload as Execute);
 
             result.ResultObject = executeResponse;
 

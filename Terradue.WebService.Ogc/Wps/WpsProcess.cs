@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using Terradue.ServiceModel.Ogc.Wps10;
 using Terradue.WebService.Ogc.Core;
 
@@ -14,6 +15,14 @@ namespace Terradue.WebService.Ogc.Wps {
 
 		public void SetHttpClient(HttpClient client) {
 			this.iprocess.HttpClient = client;
+        }
+
+		public void SetMemoryCache(IMemoryCache cache) {
+			this.iprocess.Cache = cache;
+		}
+
+        public IMemoryCache GetMemoryCache() {
+			return this.iprocess.Cache;
         }
 
 		public TimeSpan JobCacheTime { get; internal set; }
@@ -46,8 +55,8 @@ namespace Terradue.WebService.Ogc.Wps {
         {
 			get;
         }
-
-		public Task<ExecuteResponse> CreateTask(JobOrder order)
+        
+        public Task<ExecuteResponse> CreateTask(JobOrder order)
 		{
 			return iprocess.CreateTask(order);
 		}
@@ -61,6 +70,9 @@ namespace Terradue.WebService.Ogc.Wps {
 			return job.Run();
 		}
 
+        internal ExecuteResponse GetExecuteResponse() {
+			return iprocess.GetExecuteResponse();
 
-	}
+		}
+    }
 }

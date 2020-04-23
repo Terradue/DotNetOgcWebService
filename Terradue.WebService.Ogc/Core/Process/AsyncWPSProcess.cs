@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.Wps10;
 
@@ -28,8 +29,9 @@ namespace Terradue.WebService.Ogc.Core
                 creationTime = DateTime.Now
             };
         }
-
+        
         public HttpClient HttpClient;
+        public IMemoryCache Cache;
 
         public CodeType Identifier { get; private set; }
         public LanguageStringType Title { get; private set; }
@@ -67,8 +69,10 @@ namespace Terradue.WebService.Ogc.Core
 
 
         public abstract Task Task { get; }
-
+        
         public abstract Task<ExecuteResponse> CreateTask(JobOrder order);
+
+        public abstract ExecuteResponse GetExecuteResponse();
     }
 
 
