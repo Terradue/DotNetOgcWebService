@@ -80,7 +80,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     var execute = JobOrder.ReadExecuteRequest(uid);
                     var executeResponse = JobOrder.ReadExecuteResponse(uid);
                     var recoveryInfo = JobOrder.ReadRecoveryInfo(uid);
-
+                    if (recoveryInfo == null) return null;
                     job = new WpsJob();
 
                     job.progress = new JobProgress();

@@ -44,7 +44,7 @@ namespace Terradue.WebService.Ogc.Core
         }
 
         public void SetRecoveryInfo(RecoveryInfo recoveryInfo) {
-            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"])) {
+            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"]) && recoveryInfo != null) {
                 var filepath = string.Format("{0}/{1}.RecoveryInfo.json", System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"], this.Uid);
                 if (recoveryInfo != null && !File.Exists(filepath)) {
                     var json = JsonSerializer.Serialize<RecoveryInfo>(recoveryInfo);
@@ -68,7 +68,7 @@ namespace Terradue.WebService.Ogc.Core
         }
 
         public static void WriteExecuteRequest(Execute execute, string uid) {
-            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"])) {
+            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"]) && execute != null) {
                 var filepath = string.Format("{0}/{1}.ExecuteRequest.xml", System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"], uid);
                 if (execute != null && !File.Exists(filepath)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Execute));
@@ -95,7 +95,7 @@ namespace Terradue.WebService.Ogc.Core
         }
 
         public static void WriteExecuteResponse(ExecuteResponse execute, string uid) {
-            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"])) {
+            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"]) && execute != null) {
                 var filepath = string.Format("{0}/{1}.ExecuteResponse.xml", System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"], uid);
                 if (execute != null) {
                     XmlSerializer serializer = new XmlSerializer(typeof(ExecuteResponse));
