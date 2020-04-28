@@ -1,7 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Terradue.WebService.Ogc</RootNamespace>
+    <AssemblyName>Terradue.WebService.Ogc</AssemblyName>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Title>DotNetOgcWebService</Title>
+    <Description>Terradue.WebService.Ogc is a library targeting .NET Standard 2.0 and above that provides base classes to use OGC webservices</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>0.2</Version>
+    <Authors>Enguerran Boissier</Authors>
+    <Company>Terradue</Company>
+    <RepositoryUrl>https://github.com/Terradue/DotNetOgcWebService</RepositoryUrl>
+    <PackageTags>OGC;Terradue;WebService</PackageTags>
+    <PackageOutputPath>$(SolutionDir)\build</PackageOutputPath>
+    <RestorePackagesPath>$(SolutionDir)\packages</RestorePackagesPath>
+    <NoWarn>$(NoWarn);NU1605</NoWarn>    
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +28,6 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.1" />
-    <PackageReference Include="NuGet4Mono" Version="0.8.0" />
-    <PackageReference Include="NuGet4Mono.Extensions" Version="0.8.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Handler\" />
