@@ -14,6 +14,8 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.1" />
+    <PackageReference Include="NuGet4Mono" Version="0.8.0" />
+    <PackageReference Include="NuGet4Mono.Extensions" Version="0.8.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Handler\" />
