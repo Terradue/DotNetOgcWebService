@@ -82,7 +82,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     var recoveryInfo = JobOrder.ReadRecoveryInfo(uid);
                     if (recoveryInfo == null) return null;
                     job = new WpsJob();
-
+                    job.Uid = uid;
                     job.progress = new JobProgress();
                     job.progress.Report(executeResponse.Status);
                     job.jobOrder = new JobOrder() { ExecuteRequest = execute, JobProgress = job.progress, CreationTime = executeResponse.Status.creationTime };
@@ -196,7 +196,6 @@ namespace Terradue.WebService.Ogc.Wps {
             response.Process = wpsProcess.ProcessBrief;
             response.service = "WPS";
             response.version = "1.0.0";
-            response.serviceInstance = "http://localhost/test";
 
             jobOrder.ExecuteResponse = response;
 
