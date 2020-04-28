@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Serialization;
 using Terradue.ServiceModel.Ogc.Wps10;
-using Terradue.WebService.Ogc.Core.Process;
 using Terradue.WebService.Ogc.Wps;
 
 namespace Terradue.WebService.Ogc.Core
