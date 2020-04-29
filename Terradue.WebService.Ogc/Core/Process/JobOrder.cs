@@ -59,7 +59,7 @@ namespace Terradue.WebService.Ogc.Core
                     var jsonString = File.ReadAllText(filepath);
                     var recoveryInfo = JsonSerializer.Deserialize<RecoveryInfo>(jsonString);
                     return recoveryInfo;
-                }catch(Exception e) {
+                }catch (Exception) {
                     return null;
                 }
             }
@@ -86,7 +86,7 @@ namespace Terradue.WebService.Ogc.Core
                     XmlSerializer serializer = new XmlSerializer(typeof(Execute));
                     Execute execute = (Execute)serializer.Deserialize(File.OpenText(filepath));
                     return execute;
-                } catch (Exception e) {
+                } catch (Exception) {
                     return null;
                 }
             }

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
 using Terradue.ServiceModel.Ogc.Ows11;
@@ -44,8 +45,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="DescribeSensorOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public DescribeProcessOperation(ServiceOperationElement configuration,IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
-            : base(configuration, accessor, cache, httpClient)
+        public DescribeProcessOperation(ServiceOperationElement configuration,IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+            : base(configuration, accessor, cache, httpClient, logger)
         {
         }
 

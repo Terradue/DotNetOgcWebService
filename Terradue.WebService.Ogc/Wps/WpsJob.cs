@@ -8,8 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using log4net;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.Wps10;
 using Terradue.WebService.Ogc.Configuration;
@@ -23,9 +24,7 @@ namespace Terradue.WebService.Ogc.Wps {
         string uid;
         DateTime creationTime;
         WpsProcess wpsProcess;
-
-        private static readonly ILog log = LogManager.GetLogger
-            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        ILogger logger;
 
         IMemoryCache wpsJobCache;
 
@@ -67,7 +66,7 @@ namespace Terradue.WebService.Ogc.Wps {
             return uid.ToString();
         }
 
-        private static WpsJob Load(IMemoryCache cache, HttpClient httpClient, string uid)
+        private static WpsJob Load(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger, string uid)
         {
             WpsJob job = null;
             lock (cache)
@@ -82,6 +81,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     var recoveryInfo = JobOrder.ReadRecoveryInfo(uid);
                     if (recoveryInfo == null) return null;
                     job = new WpsJob();
+                    job.logger = logger;
                     job.Uid = uid;
                     job.progress = new JobProgress();
                     job.progress.Report(executeResponse.Status);
@@ -93,13 +93,11 @@ namespace Terradue.WebService.Ogc.Wps {
                     //create wps process
                     foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes) {
                         if (processConfig.Identifier == recoveryInfo.wpsProcessIdentifier) {
-                            job.wpsProcess = processConfig.CreateHandlerInstance();                            
+                            job.wpsProcess = processConfig.CreateHandlerInstance(accessor, cache, httpClient, logger);                            
                         }
                     }
 
-                    if(job.wpsProcess != null) {
-                        job.wpsProcess.SetHttpClient(httpClient);
-                        job.wpsProcess.SetMemoryCache(cache);
+                    if(job.wpsProcess != null) {                        
                         job.Task = job.wpsProcess.CreateTask(job.jobOrder);
                     }
 
@@ -109,7 +107,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
                     return job;
 
-                } catch(Exception e) {
+                } catch (Exception) {
                     return null;
                 }
             }
@@ -178,13 +176,13 @@ namespace Terradue.WebService.Ogc.Wps {
                         var ae2 = ex as AggregateException;
                         foreach (var ex2 in ae2.InnerExceptions)
                         {
-                            log.ErrorFormat("Error WPS job {0} : {1}", Uid, ex2.Message);
-                            log.Debug(ex2.StackTrace);
+                            logger.LogError("Error WPS job {0} : {1}", Uid, ex2.Message);
+                            logger.LogDebug(ex2.StackTrace);
                             pst.ExceptionReport.Exceptions.Add(new ExceptionType() { ExceptionCode = ExceptionCode.NoApplicableCode, ExceptionText = ex2.Message.Contains("Object reference") ? ex2.StackTrace : ex2.Message });
                         }
                     }
-                    log.ErrorFormat("Error WPS job {0} : {1}", Uid, ex.Message);
-                    log.Debug(ex.StackTrace);
+                    logger.LogError("Error WPS job {0} : {1}", Uid, ex.Message);
+                    logger.LogDebug(ex.StackTrace);
                     pst.ExceptionReport.Exceptions.Add(new ExceptionType()
                     {
                         ExceptionCode = ExceptionCode.NoApplicableCode,
@@ -202,9 +200,9 @@ namespace Terradue.WebService.Ogc.Wps {
             return response;
         }
 
-        public static ExecuteResponse GetCachedExecuteResponse(IMemoryCache cache, HttpClient httpclient, string uid)
+        public static ExecuteResponse GetCachedExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid)
         {
-            var job = WpsJob.Load(cache, httpclient, uid);
+            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
             if (job == null)
             {
                 throw new EntryPointNotFoundException();

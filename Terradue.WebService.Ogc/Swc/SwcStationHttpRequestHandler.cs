@@ -1,11 +1,12 @@
-using System.Collections.Specialized;
-using System.Web;
-using System.Net.Http;
-using Terradue.ServiceModel.Ogc.Exceptions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Collections.Specialized;
+using System.Net.Http;
+using System.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Terradue.ServiceModel.Ogc.Exceptions;
 
 namespace Terradue.WebService.Ogc.Swc {
     /// <summary>
@@ -13,7 +14,7 @@ namespace Terradue.WebService.Ogc.Swc {
     /// </summary>
     public class SwcStationHttpRequestHandler : HttpRequestHandler
     {
-        public SwcStationHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient) : base(accessor, cache, httpClient) { }
+        public SwcStationHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger) : base(accessor, cache, httpClient, logger) { }
 
         /// <summary>
         /// Proccesses HTTP request

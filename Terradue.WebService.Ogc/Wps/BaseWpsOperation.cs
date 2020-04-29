@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.WebService.Ogc.Configuration;
@@ -25,8 +26,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="BaseWpsOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        protected BaseWpsOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
-            : base(configuration, accessor, cache, httpClient)
+        protected BaseWpsOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+            : base(configuration, accessor, cache, httpClient, logger)
         {
         }
 
@@ -83,7 +84,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
             foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes)
             {
-                WpsProcess process = processConfig.CreateHandlerInstance();
+                WpsProcess process = processConfig.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient, this.Logger);
                 processes.Add(process.Id, process);
             }
 

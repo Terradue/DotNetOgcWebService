@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
 using Terradue.ServiceModel.Ogc.Ows11;
@@ -72,8 +73,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="GetCapabilitiesOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetCapabilitiesOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
-            : base(configuration, accessor, cache, httpClient)
+        public GetCapabilitiesOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+            : base(configuration, accessor, cache, httpClient, logger)
         {
         }
 
@@ -267,7 +268,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
             if (getCapabilities.Sections == null || getCapabilities.Sections.Contains("OperationsMetadata"))
             {
-                capabilities.OperationsMetadata = this.GetOperationsMetadata(this.Accessor,this.Cache,this.HttpClient);
+                capabilities.OperationsMetadata = this.GetOperationsMetadata(this.Accessor,this.Cache,this.HttpClient,this.Logger);
             }
 
             if (getCapabilities.Sections == null || getCapabilities.Sections.Contains("ProcessOfferings"))
@@ -346,7 +347,7 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Gets OperationsMetadata section
         /// </summary>
         /// <returns></returns>
-        protected virtual OperationsMetadata GetOperationsMetadata(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
+        protected virtual OperationsMetadata GetOperationsMetadata(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
         {
             OperationsMetadata om = new OperationsMetadata();
 
@@ -359,7 +360,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     continue;
                 }
 
-                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(accessor,cache,httpClient);
+                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(accessor,cache,httpClient,logger);
 
                 Operation operation = new Operation();
 

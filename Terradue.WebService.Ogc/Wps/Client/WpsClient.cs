@@ -6,17 +6,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.Wps10;
 
 namespace Terradue.WebService.Ogc.Wps.Client
 {
 	public class WpsClient
-	{
-		private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-			(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+	{		
 		public Uri WpsServiceUrl { get; }
+
+		public ILogger Logger;
 
 		private static XmlSerializer executeSerializer = new XmlSerializer(
 			typeof(Execute));
@@ -25,16 +25,17 @@ namespace Terradue.WebService.Ogc.Wps.Client
 		private static XmlSerializer exceptionResponseSerializer = new XmlSerializer(
 			typeof(ExceptionReport));
 
-		public WpsClient(Uri wpsServiceUrl)
+		public WpsClient(ILogger logger, Uri wpsServiceUrl)
 		{
+			Logger = logger;
 			WpsServiceUrl = wpsServiceUrl;
 		}
 
-		public Task<ExecuteResponse> ExecuteAsync(Execute executeRequest, Action<Task<ExecuteResponse>> onsubmitted)
+		public Task<ExecuteResponse> ExecuteAsync(Execute executeRequest, Action<Task<ExecuteResponse>> onsubmitted, ILogger logger)
 		{
 			HttpWebRequest httpWebRequest = CreateWpsExecuteWebRequest(executeRequest);
 
-			var task = Task.Run<ExecuteResponse>(() => GetWpsExecuteResponse(httpWebRequest));
+			var task = Task.Run<ExecuteResponse>(() => GetWpsExecuteResponse(httpWebRequest,logger));
 
 			task.ContinueWith(onsubmitted);
 
@@ -42,7 +43,7 @@ namespace Terradue.WebService.Ogc.Wps.Client
 
 		}
 
-		public Task<ExecuteResponse> ExecuteAsyncAndPollUntilComplete(Execute executeRequest, ExecutionState state, Action<StatusType, ExecutionState> onStateChange = null)
+		public Task<ExecuteResponse> ExecuteAsyncAndPollUntilComplete(ILogger logger, Execute executeRequest, ExecutionState state, Action<StatusType, ExecutionState> onStateChange = null)
 		{
 			using (var stream = new MemoryStream())
             {
@@ -51,7 +52,7 @@ namespace Terradue.WebService.Ogc.Wps.Client
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
                 {
-					log.DebugFormat("POST {0}", reader.ReadToEnd());
+					Logger.LogDebug("POST {0}", reader.ReadToEnd());
                 }
             }
 
@@ -59,15 +60,15 @@ namespace Terradue.WebService.Ogc.Wps.Client
 
 			var task = Task.Run<ExecuteResponse>(() =>
 			{
-				var response = GetWpsExecuteResponse(httpWebRequest);
-				return PollUntilComplete(response, state, onStateChange);
+				var response = GetWpsExecuteResponse(httpWebRequest, logger);
+				return PollUntilComplete(logger, response, state, onStateChange);
 			});
 
 			return task;
 
 		}
 
-		private static ExecuteResponse PollUntilComplete(ExecuteResponse executeResponse, ExecutionState state, Action<StatusType, ExecutionState> onStateChange = null)
+		private static ExecuteResponse PollUntilComplete(ILogger logger, ExecuteResponse executeResponse, ExecutionState state, Action<StatusType, ExecutionState> onStateChange = null)
 		{
 
 			if (executeResponse.Status != null)
@@ -86,13 +87,13 @@ namespace Terradue.WebService.Ogc.Wps.Client
 			Thread.Sleep(state.PollingPeriod);
 
 			HttpWebRequest httpWebRequest = WebRequest.CreateHttp(new Uri(executeResponse.statusLocation));
-			var response = GetWpsExecuteResponse(httpWebRequest);
+			var response = GetWpsExecuteResponse(httpWebRequest, logger);
 
-			return PollUntilComplete(response, state, onStateChange);
+			return PollUntilComplete(logger, response, state, onStateChange);
 
 		}
 
-		private static ExecuteResponse GetWpsExecuteResponse(HttpWebRequest httpWebRequest)
+		private static ExecuteResponse GetWpsExecuteResponse(HttpWebRequest httpWebRequest, ILogger logger)
 		{
 			try
 			{
@@ -106,7 +107,7 @@ namespace Terradue.WebService.Ogc.Wps.Client
 						var response = (ExecuteResponse)executeResponseSerializer.Deserialize(strr);
 						if (httpWebResponse.StatusCode != HttpStatusCode.OK)
 						{
-							log.DebugFormat("WPS Execute Response returned an error at {0} : {1}", httpWebRequest.RequestUri, content);
+							logger.LogDebug("WPS Execute Response returned an error at {0} : {1}", httpWebRequest.RequestUri, content);
 							try
                             {
                                 ExceptionReport exceptionReport = (ExceptionReport)exceptionResponseSerializer.Deserialize(strr);
@@ -125,8 +126,8 @@ namespace Terradue.WebService.Ogc.Wps.Client
 			}
 			catch (Exception e)
 			{
-				log.ErrorFormat("Error reading the execute response at {1} : {0}", e.Message, httpWebRequest.RequestUri);
-				log.Debug(e.StackTrace);
+				logger.LogError("Error reading the execute response at {1} : {0}", e.Message, httpWebRequest.RequestUri);
+				logger.LogDebug(e.StackTrace);
 				throw;
 			}
 

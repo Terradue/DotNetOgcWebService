@@ -15,6 +15,7 @@ using Terradue.WebService.Ogc.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using System.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Terradue.WebService.Ogc.Sos {
     /// <summary>
@@ -73,8 +74,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="GetCapabilitiesOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetCapabilitiesOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
-            : base(configuration, entitiesFactory, accessor, cache, httpClient)
+        public GetCapabilitiesOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+            : base(configuration, entitiesFactory, accessor, cache, httpClient, logger)
         {
         }
 
@@ -357,7 +358,7 @@ namespace Terradue.WebService.Ogc.Sos {
                     continue;
                 }
 
-                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient);
+                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient, this.Logger);
 
                 Operation operation = new Operation();
 
