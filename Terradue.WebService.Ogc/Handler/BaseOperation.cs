@@ -58,11 +58,17 @@ namespace Terradue.WebService.Ogc {
             this.HttpClient = httpClient;
             this.Logger = logger;
 
-            this.Logger.LogDebug("BaseOperation constructor, uri = {0}", this.Accessor.HttpContext.Request.Host.Value);
-            this.Logger.LogDebug("BaseOperation constructor, uricomponent = {0}", this.Accessor.HttpContext.Request.Host.ToUriComponent());
+            var builder = new UriBuilder();
+            builder.Scheme = this.Accessor.HttpContext.Request.Scheme;
+            builder.Host = this.Accessor.HttpContext.Request.Host.Value;
+            builder.Path = this.Accessor.HttpContext.Request.Path;
+            builder.Query = this.Accessor.HttpContext.Request.QueryString.ToUriComponent();
+            var uri = builder.Uri;
+
+            this.Logger.LogDebug("BaseOperation constructor, uri = {0}", builder.Uri.AbsoluteUri);
 
             //  Set service base uri
-            this.ServiceBaseUri = new Uri(this.Accessor.HttpContext.Request.Host.ToUriComponent());
+            this.ServiceBaseUri = builder.Uri;
         }
 
         /// <summary>
