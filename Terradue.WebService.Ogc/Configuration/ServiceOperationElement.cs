@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Terradue.WebService.Ogc.Configuration
 {
@@ -180,10 +181,10 @@ namespace Terradue.WebService.Ogc.Configuration
         /// Creates an instance of an operation handler
         /// </summary>
         /// <returns>An operation handler instance</returns>        
-        public BaseOperation CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient) {
+        public BaseOperation CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger) {
             if (this.operation == null) {
                 this.PrepareOperation();
-                this.operation = Activator.CreateInstance(this._handlerType, new object[] { this, accessor, cache, httpClient }) as BaseOperation;
+                this.operation = Activator.CreateInstance(this._handlerType, new object[] { this, accessor, cache, httpClient, logger }) as BaseOperation;
             }
             return this.operation;
         }

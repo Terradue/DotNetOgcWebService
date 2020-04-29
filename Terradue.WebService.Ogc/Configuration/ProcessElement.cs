@@ -2,6 +2,9 @@ using System;
 using System.Configuration;
 using System.Globalization;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.WebService.Ogc.Core;
 using Terradue.WebService.Ogc.Wps;
 
@@ -155,7 +158,7 @@ namespace Terradue.WebService.Ogc.Configuration
         /// Creates an instance of an operation handler
         /// </summary>
         /// <returns>An operation handler instance</returns>
-        public WpsProcess CreateHandlerInstance()
+        public WpsProcess CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
         {
             if (this.process == null)
             {
@@ -171,7 +174,9 @@ namespace Terradue.WebService.Ogc.Configuration
 				var iprocess = Activator.CreateInstance(this._handlerType, this.Identifier, this.Title, this.Abstract) as AsyncWPSProcess;
                 this.process = new WpsProcess(iprocess);
 				this.process.JobCacheTime = TimeSpan.FromSeconds(this.JobCachePeriod);
-
+                this.process.SetHttpClient(httpClient);
+                this.process.SetMemoryCache(cache);
+                this.process.SetLogger(logger);
             }
 
             return this.process;

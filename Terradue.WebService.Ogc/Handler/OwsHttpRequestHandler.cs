@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
 using Terradue.ServiceModel.Ogc.Ows11;
@@ -22,7 +23,7 @@ namespace Terradue.WebService.Ogc {
     /// </summary>
     public class OwsHttpRequestHandler : HttpRequestHandler {
 
-        public OwsHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient) : base(accessor, cache, httpClient) { }
+        public OwsHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger) : base(accessor, cache, httpClient, logger) { }
 
         /// <summary>
         /// Proccesses HTTP request
@@ -92,7 +93,7 @@ namespace Terradue.WebService.Ogc {
 
                 if (result == null) {
                     //  Get request handler object for selected operation
-                    BaseOperation requestHandler = operation.CreateHandlerInstance(this.HttpAccessor, this.Cache, this.HttpClient);
+                    BaseOperation requestHandler = operation.CreateHandlerInstance(this.HttpAccessor, this.Cache, this.HttpClient, this.Logger);
 
                     OwsRequestBase payload = null;
 

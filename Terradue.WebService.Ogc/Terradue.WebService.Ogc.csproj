@@ -28,6 +28,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(SolutionDir)\LICENSE" Pack="true" PackagePath="" />

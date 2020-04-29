@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.WebService.Ogc.Configuration;
@@ -61,8 +62,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="BaseSosOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        protected BaseSosOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
-            : base(configuration, accessor, cache, httpClient)
+        protected BaseSosOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+            : base(configuration, accessor, cache, httpClient, logger)
         {
             this.entitiesFactory = entitiesFactory;
         }

@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc.Wps10;
 using Terradue.WebService.Ogc.Core;
 
@@ -23,6 +24,10 @@ namespace Terradue.WebService.Ogc.Wps {
 
         public IMemoryCache GetMemoryCache() {
 			return this.iprocess.Cache;
+        }
+
+        public void SetLogger(ILogger logger) {
+			this.iprocess.Logger = logger;
         }
 
 		public TimeSpan JobCacheTime { get; internal set; }

@@ -1,17 +1,16 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.WebService.Ogc.Configuration;
 
-namespace Terradue.WebService.Ogc.Sos
-{
+namespace Terradue.WebService.Ogc.Sos {
     /// <summary>
     /// Provides functionlity for OGC Web Service GetResourceById operation
     /// </summary>
@@ -21,8 +20,8 @@ namespace Terradue.WebService.Ogc.Sos
         /// Initializes a new instance of the <see cref="GetResourceByIdOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetResourceByIdOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient)
-            : base(configuration, entitiesFactory, accessor, cache, httpClient)
+        public GetResourceByIdOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+            : base(configuration, entitiesFactory, accessor, cache, httpClient, logger)
         {
         }
 

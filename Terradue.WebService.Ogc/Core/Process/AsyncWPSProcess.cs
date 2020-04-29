@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.Wps10;
 
-namespace Terradue.WebService.Ogc.Core
-{
+namespace Terradue.WebService.Ogc.Core {
     public abstract class AsyncWPSProcess : IAsyncProcess
     {
         public AsyncWPSProcess(string identifier, string title, string descr, string version = "1.0")
@@ -32,6 +30,7 @@ namespace Terradue.WebService.Ogc.Core
         
         public HttpClient HttpClient;
         public IMemoryCache Cache;
+        public ILogger Logger;
 
         public CodeType Identifier { get; private set; }
         public LanguageStringType Title { get; private set; }
@@ -69,7 +68,7 @@ namespace Terradue.WebService.Ogc.Core
 
 
         public abstract Task Task { get; }
-        
+
         public abstract Task<ExecuteResponse> CreateTask(JobOrder order);
 
         public abstract ExecuteResponse GetExecuteResponse();
