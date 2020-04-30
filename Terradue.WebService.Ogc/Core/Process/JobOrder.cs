@@ -113,7 +113,7 @@ namespace Terradue.WebService.Ogc.Core
                     XmlSerializer serializer = new XmlSerializer(typeof(ExecuteResponse));
                     ExecuteResponse execute = (ExecuteResponse)serializer.Deserialize(File.OpenText(filepath));
                     return execute;
-                } catch (Exception e) {
+                } catch (Exception) {
                     return null;
                 }
             }
