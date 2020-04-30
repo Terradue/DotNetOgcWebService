@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
@@ -58,17 +59,11 @@ namespace Terradue.WebService.Ogc {
             this.HttpClient = httpClient;
             this.Logger = logger;
 
-            var builder = new UriBuilder();
-            builder.Scheme = this.Accessor.HttpContext.Request.Scheme;
-            builder.Host = this.Accessor.HttpContext.Request.Host.Value;
-            builder.Path = this.Accessor.HttpContext.Request.Path;
-            builder.Query = this.Accessor.HttpContext.Request.QueryString.ToUriComponent();
-            var uri = builder.Uri;
-
-            this.Logger.LogDebug("BaseOperation constructor, uri = {0}", builder.Uri.AbsoluteUri);
+            var url = UriHelper.GetDisplayUrl(this.Accessor.HttpContext.Request);
+            this.Logger.LogDebug("BaseOperation constructor, uri = {0}", url);
 
             //  Set service base uri
-            this.ServiceBaseUri = builder.Uri;
+            this.ServiceBaseUri = new Uri(url);
         }
 
         /// <summary>
