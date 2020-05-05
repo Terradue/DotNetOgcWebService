@@ -153,7 +153,11 @@ namespace Terradue.WebService.Ogc.Wps {
 		/// <returns>Resposne object to be sent back to the client</returns>
 		public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
+
+            this.Logger.LogInformation("Process Execute request");
+
             string identifier = ((Execute)payload).Identifier;
+            this.Logger.LogDebug("identifier = {0}",identifier);
 
             //  Make sure there is valid request parameter
             if (string.IsNullOrEmpty(identifier))
