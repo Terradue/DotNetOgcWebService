@@ -30,6 +30,10 @@ namespace Terradue.WebService.Ogc.Wps {
 			this.iprocess.Logger = logger;
         }
 
+		public ILogger GetLogger() {
+			return this.iprocess.Logger;
+		}
+
 		public TimeSpan JobCacheTime { get; internal set; }
 
 		public ProcessDescriptionType ProcessDescription

@@ -31,6 +31,9 @@ namespace Terradue.WebService.Ogc.Wps {
         public WpsJob() { }
         public WpsJob(WpsProcess wpsProcess, Execute execute)
         {
+            logger = wpsProcess.GetLogger();
+            logger.LogInformation("Create new wpsjob");
+            logger.LogDebug("Create new wpsjob -- start");
             this.wpsProcess = wpsProcess;
             this.wpsJobCache = this.wpsProcess.GetMemoryCache();
             progress = new JobProgress();
@@ -40,6 +43,7 @@ namespace Terradue.WebService.Ogc.Wps {
             Uid = Save(DateTimeOffset.Now.Add(wpsProcess.JobCacheTime));
             this.jobOrder.Uid = this.Uid;
             JobOrder.WriteExecuteRequest(execute, this.Uid);
+            logger.LogDebug("Create new wpsjob -- end");
         }
         
         public Task<ExecuteResponse> Task
@@ -129,7 +133,7 @@ namespace Terradue.WebService.Ogc.Wps {
         
         public ExecuteResponse Run()
         {
-
+            logger.LogInformation("Run wpsjob");
             Task.Start();
             progress.Report(new StatusType()
             {
@@ -147,22 +151,16 @@ namespace Terradue.WebService.Ogc.Wps {
         {
             ExecuteResponse response = null;
 
+            logger.LogInformation("Get wpsjob ExecuteResponse");
+
             try
             {
                 response = wpsProcess.GetExecuteResponse();
-
-                //if (Task.IsCompleted)
-                //{
-                //    response = Task.Result;
-                //}
-                //if (response == null)
-                //{
-                //    response = new ExecuteResponse();
-                //    response.Status = progress.Status;
-                //}
             }
             catch (AggregateException ae)
             {
+                logger.LogError(ae.Message);
+                logger.LogDebug(ae.StackTrace);
                 response = new ExecuteResponse();
                 var pst = new ProcessFailedType();
                 pst.ExceptionReport = new ServiceModel.Ogc.Ows11.ExceptionReport();
@@ -190,12 +188,17 @@ namespace Terradue.WebService.Ogc.Wps {
                     });
                 }
             }
+            var uri = new Uri(WebProcessingServiceConfiguration.Settings.JobStatusBaseUrl);
+            response.serviceInstance = string.Format("{0}://{1}/",uri.Scheme,uri.Host);
             response.statusLocation = string.Format("{0}/{1}", WebProcessingServiceConfiguration.Settings.JobStatusBaseUrl, Uid);
             response.Process = wpsProcess.ProcessBrief;
             response.service = "WPS";
             response.version = "1.0.0";
 
             jobOrder.ExecuteResponse = response;
+
+            logger.LogDebug("Return response of type {0}",response.Status.ItemElementName.ToString());
+            logger.LogDebug(response.statusLocation);
 
             return response;
         }
