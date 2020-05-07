@@ -5,6 +5,8 @@ namespace Terradue.WebService.Ogc.Wps {
         public string wpsProcessIdentifier { get; set; }
 
         public string identifier { get; set; }
+        
+        public int retry { get; set; }
 
     }
 }

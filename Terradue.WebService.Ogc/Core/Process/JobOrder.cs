@@ -44,11 +44,9 @@ namespace Terradue.WebService.Ogc.Core
 
         public void SetRecoveryInfo(RecoveryInfo recoveryInfo) {
             if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"]) && recoveryInfo != null) {
-                var filepath = string.Format("{0}/{1}.RecoveryInfo.json", System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"], this.Uid);
-                if (recoveryInfo != null && !File.Exists(filepath)) {
-                    var json = JsonSerializer.Serialize<RecoveryInfo>(recoveryInfo);
-                    System.IO.File.WriteAllText(filepath, json);
-                }
+                var filepath = string.Format("{0}/{1}.RecoveryInfo.json", System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"], this.Uid);                
+                var json = JsonSerializer.Serialize<RecoveryInfo>(recoveryInfo);
+                System.IO.File.WriteAllText(filepath, json);                
             }
         }
 
