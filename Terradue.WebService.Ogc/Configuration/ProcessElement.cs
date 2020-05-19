@@ -106,6 +106,21 @@ namespace Terradue.WebService.Ogc.Configuration
         }
 
         /// <summary>
+        /// Gets or sets process version
+        /// </summary>
+        /// <example>GetCapabilities</example>
+        [ConfigurationProperty("version", IsRequired = true)]
+        public string Version {
+            get {
+                return (string)this["version"];
+            }
+
+            set {
+                this["version"] = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets operation handler type
         /// </summary>
         [ConfigurationProperty("type", IsRequired = true)]
@@ -171,7 +186,7 @@ namespace Terradue.WebService.Ogc.Configuration
                     throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture, "Type '{0}' is not found.", this.DefaultHandlerType));
                 }
 
-				var iprocess = Activator.CreateInstance(this._handlerType, this.Identifier, this.Title, this.Abstract) as AsyncWPSProcess;
+				var iprocess = Activator.CreateInstance(this._handlerType, this.Identifier, this.Title, this.Abstract, this.Version) as AsyncWPSProcess;
                 this.process = new WpsProcess(iprocess);
 				this.process.JobCacheTime = TimeSpan.FromSeconds(this.JobCachePeriod);
                 this.process.SetHttpClient(httpClient);
