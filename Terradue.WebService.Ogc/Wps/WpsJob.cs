@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Runtime.Caching;
@@ -203,6 +204,17 @@ namespace Terradue.WebService.Ogc.Wps {
             return response;
         }
 
+        private RecoveryInfo GetRecoveryInfo() {
+            return jobOrder.RecoveryInfo;
+        }
+
+        private List<string> GetReport() {
+            if (this.wpsProcess != null) {
+                return this.wpsProcess.GetReport();
+            }
+            return null;
+        }
+
         public static ExecuteResponse GetCachedExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid)
         {
             var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
@@ -211,7 +223,22 @@ namespace Terradue.WebService.Ogc.Wps {
                 throw new EntryPointNotFoundException();
             }
             return job.GetExecuteResponse();
+        }
 
+        public static RecoveryInfo GetRecoveryInfo(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
+            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+            if (job == null) {
+                throw new EntryPointNotFoundException();
+            }
+            return job.GetRecoveryInfo();
+        }
+
+        public static List<string> GetReport(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
+            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+            if (job == null) {
+                throw new EntryPointNotFoundException();
+            }
+            return job.GetReport();
         }
     }
 }
