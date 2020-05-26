@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -72,6 +73,8 @@ namespace Terradue.WebService.Ogc.Core {
         public abstract Task<ExecuteResponse> CreateTask(JobOrder order);
 
         public abstract ExecuteResponse GetExecuteResponse();
+
+        public abstract List<string> GetReport();
     }
 
 

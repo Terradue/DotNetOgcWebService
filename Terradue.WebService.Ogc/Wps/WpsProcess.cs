@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -83,5 +84,10 @@ namespace Terradue.WebService.Ogc.Wps {
 			return iprocess.GetExecuteResponse();
 
 		}
-    }
+
+		internal List<string> GetReport() {
+			return iprocess.GetReport();
+
+		}
+	}
 }
