@@ -189,12 +189,23 @@ namespace Terradue.WebService.Ogc.Wps {
                     });
                 }
             }
-            var uri = new Uri(WebProcessingServiceConfiguration.Settings.JobStatusBaseUrl);
-            response.serviceInstance = string.Format("{0}://{1}/",uri.Scheme,uri.Host);
-            response.statusLocation = string.Format("{0}/{1}", WebProcessingServiceConfiguration.Settings.JobStatusBaseUrl, Uid);
-            response.Process = wpsProcess.ProcessBrief;
-            response.service = "WPS";
-            response.version = "1.0.0";
+            
+            if (string.IsNullOrEmpty(response.serviceInstance)) {
+                var uri = new Uri(WebProcessingServiceConfiguration.Settings.JobStatusBaseUrl);
+                response.serviceInstance = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
+            }
+            if (string.IsNullOrEmpty(response.statusLocation)) {
+                response.statusLocation = string.Format("{0}/{1}", WebProcessingServiceConfiguration.Settings.JobStatusBaseUrl, Uid);
+            }
+            if (response.Process == null) {
+                response.Process = wpsProcess.ProcessBrief;
+            }
+            if (string.IsNullOrEmpty(response.service)) {
+                response.service = "WPS";
+            }
+            if (string.IsNullOrEmpty(response.version)) {
+                response.version = "1.0.0";
+            }
 
             jobOrder.ExecuteResponse = response;
 
