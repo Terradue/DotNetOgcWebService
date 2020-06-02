@@ -244,6 +244,15 @@ namespace Terradue.WebService.Ogc.Wps {
             return job.GetRecoveryInfo();
         }
 
+        public static void ForceRetry(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid, int retry) {
+            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+            if (job == null) {
+                throw new EntryPointNotFoundException();
+            }
+            job.jobOrder.RecoveryInfo.retry = retry;
+            job.jobOrder.SetRecoveryInfo(job.jobOrder.RecoveryInfo);
+        }
+
         public static List<string> GetReport(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
             var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
             if (job == null) {
