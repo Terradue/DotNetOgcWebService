@@ -84,7 +84,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
             foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes)
             {
-                WpsProcess process = processConfig.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient, this.Logger);
+                WpsProcess process = processConfig.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient, this.Logger, true);
                 processes.Add(process.Id, process);
             }
 

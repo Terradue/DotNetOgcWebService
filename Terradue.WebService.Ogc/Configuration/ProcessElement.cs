@@ -173,9 +173,9 @@ namespace Terradue.WebService.Ogc.Configuration
         /// Creates an instance of an operation handler
         /// </summary>
         /// <returns>An operation handler instance</returns>
-        public WpsProcess CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+        public WpsProcess CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger, bool forceCreateNewProcess = false)
         {
-            if (this.process == null)
+            if (this.process == null || forceCreateNewProcess)
             {
                 if (this._handlerType == null)
                 {
