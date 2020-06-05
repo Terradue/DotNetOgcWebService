@@ -98,7 +98,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     //create wps process
                     foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes) {
                         if (processConfig.Identifier == recoveryInfo.wpsProcessIdentifier) {
-                            job.wpsProcess = processConfig.CreateHandlerInstance(accessor, cache, httpClient, logger);                            
+                            job.wpsProcess = processConfig.CreateHandlerInstance(accessor, cache, httpClient, logger, true);                            
                         }
                     }
 
