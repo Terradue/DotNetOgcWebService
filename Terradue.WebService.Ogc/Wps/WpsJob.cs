@@ -65,18 +65,23 @@ namespace Terradue.WebService.Ogc.Wps {
             }
             lock (wpsJobCache)
             {
+                logger.LogDebug("Set job cache -- {0}", uid.ToString());
                 wpsJobCache.Set<WpsJob>(uid.ToString(), this, absoluteExpiration.DateTime);
+                if (this.jobOrder != null && this.jobOrder.Uid != null && this.jobOrder.Uid != uid.ToString()) logger.LogDebug("Wrong uid -> {0}", this.jobOrder.Uid);
             }
             
             return uid.ToString();
         }
 
-        private static WpsJob Load(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger, string uid)
+        private static WpsJob Load(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger, string uid, bool useCache = true)
         {
             WpsJob job = null;
-            lock (cache)
-            {
-                job = cache.Get(uid) as WpsJob;
+            if (useCache) {
+                lock (cache) {
+                    logger.LogDebug("Get job cache -- {0}", uid);
+                    job = cache.Get(uid) as WpsJob;
+                    if (job.jobOrder.Uid != uid) logger.LogDebug("Wrong uid -> {0}", job.jobOrder.Uid);
+                }
             }
             if (job == null) {
                 try {
@@ -107,7 +112,9 @@ namespace Terradue.WebService.Ogc.Wps {
                     }
 
                     lock (cache) {
+                        logger.LogDebug("Set job cache -- {0}", uid);
                         cache.Set<WpsJob>(uid, job, DateTimeOffset.Now.Add(job.wpsProcess.JobCacheTime).DateTime);
+                        if (job.jobOrder.Uid != uid) logger.LogDebug("Wrong uid -> {0}", job.jobOrder.Uid);
                     }
 
                     return job;
@@ -229,10 +236,13 @@ namespace Terradue.WebService.Ogc.Wps {
         public static ExecuteResponse GetCachedExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid)
         {
             var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
-            if (job == null)
-            {
-                throw new EntryPointNotFoundException();
-            }
+            if (job == null) throw new EntryPointNotFoundException();            
+            return job.GetExecuteResponse();
+        }
+
+        public static ExecuteResponse GetExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
+            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid, false);
+            if (job == null) throw new EntryPointNotFoundException();            
             return job.GetExecuteResponse();
         }
 
