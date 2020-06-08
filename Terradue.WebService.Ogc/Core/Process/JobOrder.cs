@@ -42,6 +42,13 @@ namespace Terradue.WebService.Ogc.Core
             Report(response);
         }
 
+        public void Report(ExecuteResponse response) {
+            this.ExecuteResponse = response;
+            JobProgress.Report(response.Status);
+
+            WriteExecuteResponse(response, this.Uid);
+        }
+
         public void SetRecoveryInfo(RecoveryInfo recoveryInfo) {
             if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"]) && recoveryInfo != null) {
                 var filepath = string.Format("{0}/{1}.RecoveryInfo.json", System.Configuration.ConfigurationManager.AppSettings["app:recoveryfiles_path"], this.Uid);                
@@ -116,13 +123,6 @@ namespace Terradue.WebService.Ogc.Core
                 }
             }
             return null;
-        }
-
-        public void Report(ExecuteResponse response) {
-            this.ExecuteResponse = response;
-            JobProgress.Report(response.Status);
-
-            WriteExecuteResponse(response, this.Uid);
         }
 
     }
