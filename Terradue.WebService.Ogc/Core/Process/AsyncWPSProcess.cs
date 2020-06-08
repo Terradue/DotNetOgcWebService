@@ -48,7 +48,7 @@ namespace Terradue.WebService.Ogc.Core {
             }
         }
 
-        public StatusType Status { get; private set; }
+        public StatusType Status { get; set; }
 
 
         public abstract ProcessDescriptionType ProcessDescription

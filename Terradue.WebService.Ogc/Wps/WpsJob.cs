@@ -99,6 +99,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     job.jobOrder.ExecuteResponse = executeResponse;
                     job.jobOrder.Uid = uid;
                     job.jobOrder.RecoveryInfo = recoveryInfo;
+                    if (executeResponse.Status != null) job.creationTime = executeResponse.Status.creationTime;
 
                     //create wps process
                     foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes) {
@@ -157,7 +158,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
         public ExecuteResponse GetExecuteResponse()
         {
-            ExecuteResponse response = null;
+            ExecuteResponse response = this.jobOrder != null ? this.jobOrder.ExecuteResponse : null;
 
             logger.LogInformation("Get wpsjob ExecuteResponse");
 
