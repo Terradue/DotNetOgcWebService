@@ -87,9 +87,9 @@ namespace Terradue.WebService.Ogc.Wps {
                 try {
                     //read from file
                     var execute = JobOrder.ReadExecuteRequest(uid);
+                    if (execute == null) return null;
                     var executeResponse = JobOrder.ReadExecuteResponse(uid);
                     var recoveryInfo = JobOrder.ReadRecoveryInfo(uid);
-                    if (recoveryInfo == null) return null;
                     job = new WpsJob();
                     job.logger = logger;
                     job.Uid = uid;
@@ -102,8 +102,10 @@ namespace Terradue.WebService.Ogc.Wps {
                     if (executeResponse.Status != null) job.creationTime = executeResponse.Status.creationTime;
 
                     //create wps process
+                    string serviceIdentifier = recoveryInfo != null ? recoveryInfo.wpsProcessIdentifier : execute.Identifier.Value;
+                    
                     foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes) {
-                        if (processConfig.Identifier == recoveryInfo.wpsProcessIdentifier) {
+                        if (processConfig.Identifier == serviceIdentifier) {
                             job.wpsProcess = processConfig.CreateHandlerInstance(accessor, cache, httpClient, logger, true);                            
                         }
                     }
@@ -120,7 +122,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
                     return job;
 
-                } catch (Exception) {
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -246,7 +248,7 @@ namespace Terradue.WebService.Ogc.Wps {
             if (job == null) {
                 var response = JobOrder.ReadExecuteResponse(uid);
                 if (response == null) throw new EntryPointNotFoundException();
-                else return response;
+                return response;
             }
             return job.GetExecuteResponse();
         }
@@ -270,8 +272,11 @@ namespace Terradue.WebService.Ogc.Wps {
             if (job == null) {
                 throw new EntryPointNotFoundException();
             }
-            job.jobOrder.RecoveryInfo.retry = retry;
-            job.jobOrder.SetRecoveryInfo(job.jobOrder.RecoveryInfo);
+            if (job.jobOrder.RecoveryInfo != null) {
+                job.jobOrder.RecoveryInfo.retry = retry;
+                job.jobOrder.SetRecoveryInfo(job.jobOrder.RecoveryInfo);
+            }
+            job.Run();
         }
 
         public static List<string> GetReport(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
