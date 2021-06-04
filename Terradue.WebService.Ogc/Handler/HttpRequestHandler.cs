@@ -12,14 +12,12 @@ namespace Terradue.WebService.Ogc {
 
         protected readonly IHttpContextAccessor HttpAccessor;
         protected readonly IMemoryCache Cache;
-        protected readonly HttpClient HttpClient;
-        protected readonly ILogger Logger;
+        protected readonly IServiceProvider ServiceProvider;    
 
-        public HttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger) {
+        public HttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider) {
             this.HttpAccessor = accessor;
             this.Cache = cache;
-            this.HttpClient = httpClient;
-            this.Logger = logger;
+            this.ServiceProvider = serviceProvider;
         }
 
         public virtual OperationResult ProcessRequest() {

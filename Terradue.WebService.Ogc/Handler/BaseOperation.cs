@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.WebService.Ogc.Common;
@@ -19,8 +20,8 @@ namespace Terradue.WebService.Ogc {
 
         protected readonly IHttpContextAccessor Accessor;
         protected readonly IMemoryCache Cache;
-        protected readonly HttpClient HttpClient;
-        protected readonly ILogger Logger;
+        protected readonly IServiceProvider ServiceProvider;
+
 
         /// <summary>
         /// Gets an operation configuration information
@@ -46,7 +47,7 @@ namespace Terradue.WebService.Ogc {
         /// Initializes a new instance of the <see cref="BaseOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        protected BaseOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
+        protected BaseOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider)
         {
             this.Configuration = configuration;
 
@@ -56,11 +57,11 @@ namespace Terradue.WebService.Ogc {
 
             this.Accessor = accessor;
             this.Cache = cache;
-            this.HttpClient = httpClient;
-            this.Logger = logger;
+            this.ServiceProvider = serviceProvider;
 
             var url = UriHelper.GetDisplayUrl(this.Accessor.HttpContext.Request);
-            this.Logger.LogDebug("BaseOperation constructor, uri = {0}", url);
+            var logger = serviceProvider.GetService<ILogger<BaseOperation>>();
+            logger.LogDebug("BaseOperation constructor, uri = {0}", url);
 
             //  Set service base uri
             this.ServiceBaseUri = new Uri(url);

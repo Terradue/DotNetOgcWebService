@@ -15,10 +15,6 @@ namespace Terradue.WebService.Ogc.Wps {
 			this.iprocess = iprocess;
 		}
 
-		public void SetHttpClient(HttpClient client) {
-			this.iprocess.HttpClient = client;
-        }
-
 		public void SetMemoryCache(IMemoryCache cache) {
 			this.iprocess.Cache = cache;
 		}
