@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Terradue.ServiceModel.Ogc.Ows11;
 using Terradue.ServiceModel.Ogc.Wps10;
 using Terradue.WebService.Ogc.Configuration;
@@ -73,8 +74,9 @@ namespace Terradue.WebService.Ogc.Wps {
             return uid.ToString();
         }
 
-        private static WpsJob Load(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger, string uid, bool useCache = true)
+        private static WpsJob Load(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid, bool useCache = true)
         {
+            var logger = serviceProvider.GetService<ILogger<WpsJob>>();
             WpsJob job = null;
             if (useCache) {
                 lock (cache) {
@@ -106,7 +108,7 @@ namespace Terradue.WebService.Ogc.Wps {
                     
                     foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes) {
                         if (processConfig.Identifier == serviceIdentifier) {
-                            job.wpsProcess = processConfig.CreateHandlerInstance(accessor, cache, httpClient, logger, true);                            
+                            job.wpsProcess = processConfig.CreateHandlerInstance(accessor, cache, serviceProvider, true);                            
                         }
                     }
 
@@ -236,15 +238,15 @@ namespace Terradue.WebService.Ogc.Wps {
             return null;
         }
 
-        public static ExecuteResponse GetCachedExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid)
+        public static ExecuteResponse GetCachedExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid)
         {
-            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+            var job = WpsJob.Load(accessor, cache, serviceProvider, uid);
             if (job == null) throw new EntryPointNotFoundException();            
             return job.GetExecuteResponse();
         }
 
-        public static ExecuteResponse GetExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
-            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid, false);            
+        public static ExecuteResponse GetExecuteResponse(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid) {
+            var job = WpsJob.Load(accessor, cache, serviceProvider, uid, false);            
             if (job == null) {
                 var response = JobOrder.ReadExecuteResponse(uid);
                 if (response == null) throw new EntryPointNotFoundException();
@@ -253,22 +255,22 @@ namespace Terradue.WebService.Ogc.Wps {
             return job.GetExecuteResponse();
         }
 
-        public static Execute GetExecuteRequest(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
-            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid, false);
+        public static Execute GetExecuteRequest(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid) {
+            var job = WpsJob.Load(accessor, cache, serviceProvider, uid, false);
             if (job == null) throw new EntryPointNotFoundException();
             return job.jobOrder.ExecuteRequest;
         }
 
-        public static RecoveryInfo GetRecoveryInfo(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
-            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+        public static RecoveryInfo GetRecoveryInfo(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid) {
+            var job = WpsJob.Load(accessor, cache, serviceProvider, uid);
             if (job == null) {
                 throw new EntryPointNotFoundException();
             }
             return job.GetRecoveryInfo();
         }
 
-        public static void ForceRetry(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid, int retry) {
-            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+        public static void ForceRetry(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid, int retry) {
+            var job = WpsJob.Load(accessor, cache, serviceProvider, uid);
             if (job == null) {
                 throw new EntryPointNotFoundException();
             }
@@ -279,8 +281,8 @@ namespace Terradue.WebService.Ogc.Wps {
             job.Run();
         }
 
-        public static List<string> GetReport(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpclient, ILogger logger, string uid) {
-            var job = WpsJob.Load(accessor, cache, httpclient, logger, uid);
+        public static List<string> GetReport(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, string uid) {
+            var job = WpsJob.Load(accessor, cache, serviceProvider, uid);
             if (job == null) {
                 throw new EntryPointNotFoundException();
             }

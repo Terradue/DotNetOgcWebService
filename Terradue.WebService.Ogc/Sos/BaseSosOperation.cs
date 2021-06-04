@@ -62,8 +62,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="BaseSosOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        protected BaseSosOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
-            : base(configuration, accessor, cache, httpClient, logger)
+        protected BaseSosOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider)
+            : base(configuration, accessor, cache, serviceProvider)
         {
             this.entitiesFactory = entitiesFactory;
         }

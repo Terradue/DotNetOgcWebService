@@ -28,8 +28,7 @@ namespace Terradue.WebService.Ogc.Core {
                 creationTime = DateTime.Now
             };
         }
-        
-        public HttpClient HttpClient;
+
         public IMemoryCache Cache;
         public ILogger Logger;
 

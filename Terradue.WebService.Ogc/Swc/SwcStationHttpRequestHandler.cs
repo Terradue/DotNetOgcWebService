@@ -14,7 +14,7 @@ namespace Terradue.WebService.Ogc.Swc {
     /// </summary>
     public class SwcStationHttpRequestHandler : HttpRequestHandler
     {
-        public SwcStationHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger) : base(accessor, cache, httpClient, logger) { }
+        public SwcStationHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider) : base(accessor, cache, serviceProvider) { }
 
         /// <summary>
         /// Proccesses HTTP request

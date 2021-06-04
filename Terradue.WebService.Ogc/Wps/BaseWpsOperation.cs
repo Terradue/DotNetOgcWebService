@@ -26,8 +26,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="BaseWpsOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        protected BaseWpsOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
-            : base(configuration, accessor, cache, httpClient, logger)
+        protected BaseWpsOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider)
+            : base(configuration, accessor, cache, serviceProvider)
         {
         }
 
@@ -84,7 +84,7 @@ namespace Terradue.WebService.Ogc.Wps {
 
             foreach (var processConfig in WebProcessingServiceConfiguration.Settings.Processes)
             {
-                WpsProcess process = processConfig.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient, this.Logger, true);
+                WpsProcess process = processConfig.CreateHandlerInstance(this.Accessor, this.Cache, this.ServiceProvider, true);
                 processes.Add(process.Id, process);
             }
 

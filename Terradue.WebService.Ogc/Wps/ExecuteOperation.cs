@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
@@ -44,8 +45,8 @@ namespace Terradue.WebService.Ogc.Wps {
         /// Initializes a new instance of the <see cref="DescribeSensorOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public ExecuteOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
-            : base(configuration, accessor, cache, httpClient, logger)
+        public ExecuteOperation(ServiceOperationElement configuration, IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider)
+            : base(configuration, accessor, cache, serviceProvider)
         {
         }
 
@@ -153,11 +154,12 @@ namespace Terradue.WebService.Ogc.Wps {
 		/// <returns>Resposne object to be sent back to the client</returns>
 		public override OperationResult ProcessRequest(HttpRequest request, OwsRequestBase payload = null)
         {
+            var logger = this.ServiceProvider.GetService<ILogger<ExecuteOperation>>();
 
-            this.Logger.LogInformation("Process Execute request");
+            logger.LogInformation("Process Execute request");
 
             string identifier = ((Execute)payload).Identifier;
-            this.Logger.LogDebug("identifier = {0}",identifier);
+            logger.LogDebug("identifier = {0}",identifier);
 
             //  Make sure there is valid request parameter
             if (string.IsNullOrEmpty(identifier))
@@ -175,7 +177,6 @@ namespace Terradue.WebService.Ogc.Wps {
             }
 
             var process = processes[identifier];
-            process.SetHttpClient(this.HttpClient);
             process.SetMemoryCache(this.Cache);
 
             ExecuteResponse executeResponse = process.SubmitExecuteProcess(payload as Execute);

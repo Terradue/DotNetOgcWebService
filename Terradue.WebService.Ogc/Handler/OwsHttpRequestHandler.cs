@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Terradue.ServiceModel.Ogc;
 using Terradue.ServiceModel.Ogc.Exceptions;
@@ -23,7 +24,7 @@ namespace Terradue.WebService.Ogc {
     /// </summary>
     public class OwsHttpRequestHandler : HttpRequestHandler {
 
-        public OwsHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger) : base(accessor, cache, httpClient, logger) { }
+        public OwsHttpRequestHandler(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider) : base(accessor, cache, serviceProvider) { }
 
         /// <summary>
         /// Proccesses HTTP request
@@ -93,13 +94,13 @@ namespace Terradue.WebService.Ogc {
 
                 if (result == null) {
                     //  Get request handler object for selected operation
-                    BaseOperation requestHandler = operation.CreateHandlerInstance(this.HttpAccessor, this.Cache, this.HttpClient, this.Logger);
+                    BaseOperation requestHandler = operation.CreateHandlerInstance(this.HttpAccessor, this.Cache, this.ServiceProvider);
 
                     OwsRequestBase payload = null;
 
                     //  If xmlRequest is null then use query parameters to build an request object
                     if (doc == null) {
-                        payload = Activator.CreateInstance(requestHandler.RequestType, new object[] { queryParameters }) as OwsRequestBase;
+                        payload = ActivatorUtilities.CreateInstance(this.ServiceProvider, requestHandler.RequestType, new object[] { queryParameters }) as OwsRequestBase;                        
                     } else {
                         XmlSerializer serializer = requestHandler.GetRequestTypeSerializer();
                         payload = serializer.Deserialize(doc.CreateReader()) as OwsRequestBase;

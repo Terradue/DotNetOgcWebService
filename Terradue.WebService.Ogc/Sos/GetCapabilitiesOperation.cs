@@ -74,8 +74,8 @@ namespace Terradue.WebService.Ogc.Sos {
         /// Initializes a new instance of the <see cref="GetCapabilitiesOperation"/> class.
         /// </summary>
         /// <param name="configuration">Operation configuration.</param>
-        public GetCapabilitiesOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger)
-            : base(configuration, entitiesFactory, accessor, cache, httpClient, logger)
+        public GetCapabilitiesOperation(ServiceOperationElement configuration, SosEntitiesFactory entitiesFactory, IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider)
+            : base(configuration, entitiesFactory, accessor, cache, serviceProvider)
         {
         }
 
@@ -358,7 +358,7 @@ namespace Terradue.WebService.Ogc.Sos {
                     continue;
                 }
 
-                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(this.Accessor, this.Cache, this.HttpClient, this.Logger);
+                BaseOperation operationHandler = operationInfo.CreateHandlerInstance(this.Accessor, this.Cache, this.ServiceProvider);
 
                 Operation operation = new Operation();
 

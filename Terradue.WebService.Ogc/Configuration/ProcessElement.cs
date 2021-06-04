@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Terradue.WebService.Ogc.Core;
 using Terradue.WebService.Ogc.Wps;
@@ -173,7 +174,7 @@ namespace Terradue.WebService.Ogc.Configuration
         /// Creates an instance of an operation handler
         /// </summary>
         /// <returns>An operation handler instance</returns>
-        public WpsProcess CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, HttpClient httpClient, ILogger logger, bool forceCreateNewProcess = false)
+        public WpsProcess CreateHandlerInstance(IHttpContextAccessor accessor, IMemoryCache cache, IServiceProvider serviceProvider, bool forceCreateNewProcess = false)
         {
             if (this.process == null || forceCreateNewProcess)
             {
@@ -186,11 +187,11 @@ namespace Terradue.WebService.Ogc.Configuration
                     throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture, "Type '{0}' is not found.", this.DefaultHandlerType));
                 }
 
-				var iprocess = Activator.CreateInstance(this._handlerType, this.Identifier, this.Title, this.Abstract, this.Version) as AsyncWPSProcess;
+				var iprocess = ActivatorUtilities.CreateInstance(serviceProvider, this._handlerType, this.Identifier, this.Title, this.Abstract, this.Version) as AsyncWPSProcess;
                 this.process = new WpsProcess(iprocess);
-				this.process.JobCacheTime = TimeSpan.FromSeconds(this.JobCachePeriod);
-                this.process.SetHttpClient(httpClient);
+				this.process.JobCacheTime = TimeSpan.FromSeconds(this.JobCachePeriod);                
                 this.process.SetMemoryCache(cache);
+                var logger = serviceProvider.GetService<ILogger<WpsProcess>>();
                 this.process.SetLogger(logger);
             }
 
