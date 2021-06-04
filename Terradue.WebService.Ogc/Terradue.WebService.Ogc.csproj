@@ -8,7 +8,7 @@
     <Title>DotNetOgcWebService</Title>
     <Description>Terradue.WebService.Ogc is a library targeting .NET Standard 2.0 and above that provides base classes to use OGC webservices</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.8</Version>
+    <Version>1.9</Version>
     <Authors>Enguerran Boissier</Authors>
     <Company>Terradue</Company>
     <RepositoryUrl>https://github.com/Terradue/DotNetOgcWebService</RepositoryUrl>
